@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Products.Application.Commands;
 using Products.Application.Mappers;
 using Products.Core.Repositories;
@@ -63,6 +63,19 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddHttpContextAccessor();
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,7 +87,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
+app.UseCors("AllowAngular");
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();

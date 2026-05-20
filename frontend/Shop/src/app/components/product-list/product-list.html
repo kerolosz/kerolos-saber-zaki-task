@@ -1,0 +1,86 @@
+<div class="container mt-4">
+  <button routerLink="addProduct" class="btn btn-outline-primary mb-3">Add Product</button>
+
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Product List</h5>
+    </div>
+
+    <div class="card-body p-0">
+      @if (products().data.length > 0) {
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>OldPrice</th>
+              <th>NewPrice</th>
+              <th>Image</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (product of products().data; track product; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.oldPrice | currency }}</td>
+                <td>{{ product.newPrice | currency }}</td>
+                <td>
+                  <img
+                    [src]="product.imagePath"
+                    alt="{{ product.name }}"
+                    class="img-thumbnail"
+                    style="max-width: 150px; max-height: 100px"
+                  />
+                </td>
+                <td class="text-center">
+                  <button
+                    class="btn btn-outline-warning btn-md me-2"
+                    routerLink="/products/{{ product.id }}"
+                  >
+                    Edit
+                  </button>
+                  <button class="btn btn-outline-danger btn-md" (click)="openDeleteModal(product)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="text-center py-5">
+          <h5 class="text-muted">No products found</h5>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        Are you sure you want to delete
+        <strong>{{ selectedProduct?.name }}</strong
+        >?
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+        <button class="btn btn-danger" (click)="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
