@@ -8,3 +8,5 @@ Please make sure to update the following configuration files before running the 
 
 
 ## 🗄️ 2. change the api URL (FrontEnd) at ApiConstants.ts file
+
+# attached SSO-Azure-AD-Guide.md to explain how to apply SSO (unfortuntly I don't have azure account)
