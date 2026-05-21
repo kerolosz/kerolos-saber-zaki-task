@@ -1,4 +1,4 @@
-# ⚠️ Important Notes Before Running the Project
+# Important Notes Before Running the Project
 
 Please make sure to update the following configuration files before running the application:
 
