@@ -24,7 +24,7 @@ export class ProductList implements OnInit {
     });
   }
 
-  // TODO: Implement delete functionality
+  //Implement delete functionality
   selectedProduct: any = null;
 
   openDeleteModal(product: any) {
@@ -51,5 +51,5 @@ export class ProductList implements OnInit {
     const modal = bootstrap.Modal.getInstance(modalEl);
     modal?.hide();
   }
-  //
+  ///////////////////////
 }

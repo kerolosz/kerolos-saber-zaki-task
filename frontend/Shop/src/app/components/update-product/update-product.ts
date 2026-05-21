@@ -1,33 +1,65 @@
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Productservice } from '../../services/productservice';
+import { Product } from '../../models/Product';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-create-product',
+  selector: 'app-update-product',
   standalone: false,
-  templateUrl: './create-product.html',
-  styleUrl: './create-product.css',
+  templateUrl: './update-product.html',
+  styleUrl: './update-product.css',
 })
-export class CreateProduct implements OnInit {
+export class UpdateProduct implements OnInit {
+  product = signal<Product>({} as Product);
+
   onFileChangeEventClicked: boolean = false;
   form!: FormGroup;
   imagePreview: string | null = null;
+
   constructor(
     private fb: FormBuilder,
-    private productService: Productservice,
-    private router: Router,
+    private route: ActivatedRoute,
+    private _Productservice: Productservice,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
+    private router: Router,
   ) {}
+
   ngOnInit(): void {
+    this.initializeForm();
+
+    this.getProductData();
+  }
+
+  getProductData() {
+    this.route.params.subscribe((params) => {
+      const id = params['id'];
+      this._Productservice.getProductByID(id).subscribe((response) => {
+        if (response.success) {
+          this.product.set(response.data);
+          this.form.patchValue({
+            id: this.product().id,
+            name: this.product().name,
+            description: this.product().description,
+            oldPrice: this.product().oldPrice,
+            newPrice: this.product().newPrice,
+          });
+        } else {
+          console.error('Failed to fetch product details');
+        }
+      });
+    });
+  }
+  initializeForm() {
     this.form = this.fb.group({
+      id: [''],
       name: ['', Validators.required],
       description: ['', Validators.required],
       oldPrice: [null, Validators.required],
       newPrice: [null, Validators.required],
-      image: [null, Validators.required],
-      createdBy: [''],
+      image: [null],
+      updatedBy: [''],
     });
   }
 
@@ -72,16 +104,16 @@ export class CreateProduct implements OnInit {
 
     const formData = new FormData();
 
-    formData.append('name', this.form.value.name!);
-    formData.append('description', this.form.value.description!);
+    formData.append('id', this.form.value.id);
+    formData.append('name', this.form.value.name);
+    formData.append('description', this.form.value.description);
     formData.append('oldPrice', this.form.value.oldPrice!.toString());
     formData.append('newPrice', this.form.value.newPrice!.toString());
     formData.append('image', this.form.value.image);
-    formData.append('createdBy', 'admin'); // TODO: Replace with actual user
+    formData.append('updatedBy', 'admin'); // TODO: Replace with actual user
 
-    this.productService.createProduct(formData).subscribe({
+    this._Productservice.updateProduct(formData).subscribe({
       next: (res) => {
-        console.log('Created:', res);
         this.form.reset();
 
         this.router.navigate(['/']);

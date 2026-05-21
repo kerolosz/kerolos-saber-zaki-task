@@ -33,14 +33,13 @@
                   <img
                     [src]="product.imagePath"
                     alt="{{ product.name }}"
-                    class="img-thumbnail"
-                    style="max-width: 150px; max-height: 100px"
+                    class="img-thumbnail imageSize"
                   />
                 </td>
                 <td class="text-center">
                   <button
                     class="btn btn-outline-warning btn-md me-2"
-                    routerLink="/products/{{ product.id }}"
+                    routerLink="updateProduct/{{ product.id }}"
                   >
                     Edit
                   </button>
